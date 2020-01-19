@@ -81,7 +81,7 @@ function nextSequence() {
   $("#"+randomChosenColour).animate({opacity:0.0},300).animate({opacity:1.0},300);
   gamePattern.push(randomChosenColour);
   userClickedPattern = [];
-  setTimeout(nextSequence,level*350 + 1800);
+  setTimeout(nextSequence,level*500 + 1800);
 }
 
 function playSound(name) {
