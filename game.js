@@ -2,27 +2,35 @@ alert("通过鼠标点击，复述被按压下的按钮序列，看看你最多�
 var gamePattern = [];
 var userClickedPattern = [];
 var buttonColours = ["red", "blue", "green", "yellow"];
-var firsttime = true;
+var gameover = false;
 var level = 0;
 var curindex = 0;
+keyStartListen();
+
+function keyStartListen() {
 $(document).keypress(function() {
-  if (firsttime) {
-    firsttime = false;
+  if (gameover == false) {
     countDown($("#level-title"),3);
     setTimeout(()=>{
 
       nextSequence();},3600);
+      buttonStartListen();
+      $(document).unbind("keypress");
   }
-})
-$(".btn").click(function () {
-  if (firsttime) return;
-  curindex ++;
-  var userChosenColour = $(this).attr("id");
-  playSound(userChosenColour);
-  animatePress(userChosenColour);
-  userClickedPattern.push(userChosenColour);
-  checkAnswer(curindex - 1);
-});
+});}
+
+
+
+function buttonStartListen() {
+  $(".btn").click(function () {
+    curindex ++;
+    var userChosenColour = $(this).attr("id");
+    playSound(userChosenColour);
+    animatePress(userChosenColour);
+    userClickedPattern.push(userChosenColour);
+    checkAnswer(curindex - 1);
+  });
+}
 
 function checkAnswer(currentLevel) {
 if (currentLevel >= gamePattern.length) {
@@ -41,15 +49,17 @@ function gameOver(loseMessage) {
   $("#level-title").text(loseMessage);
   setTimeout(function () {$("body").removeClass("game-over")},200);
   setTimeout(function () {$("#level-title").text("Game Over, Press Any Key to Restart");},2000);
+  $(".btn").unbind("click");
   initial();
 }
 
 function initial() {
 gamePattern = [];
  userClickedPattern = [];
-  firsttime = true;
+  gameover = true;
 level = 0;
  curindex = 0;
+ keyStartListen();
 }
 
 function countDown(title, time) {
@@ -67,9 +77,12 @@ function countDown(title, time) {
 }
 
 function nextSequence() {
-  if (firsttime) return;
+  if (gameover) {//在别处已经over了
+    gameover = false;
+    return;}
   if (curindex != level) {
    gameOver("time out!");
+   gameover = false;
    return;
   }
   level ++;
